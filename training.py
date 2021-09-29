@@ -37,7 +37,7 @@ train_dataloader = DataLoader(train_dataset, batch_size=200)
 test_dataloader = DataLoader(test_dataset, batch_size=30)
 
 
-learning_rate = 0.01
+learning_rate = 0.001
 epochs = 50000
 
 loss_fn = nn.MSELoss()
@@ -50,11 +50,8 @@ def train_loop(dataloader, model, loss_fn, optimizer, pr):
     size = len(dataloader.dataset)
     for batch, (X, y) in enumerate(dataloader):
         # Compute prediction and loss
-        # print(model(X))
         pred = model(X)
         loss = loss_fn(pred, y)
-        #loss2 = loss_fn(pred[1], y[1])
-        #loss = loss1 + loss2
 
         # Backpropagation
         optimizer.zero_grad()
@@ -79,7 +76,7 @@ def test_loop(dataloader, model, loss_fn, pr):
             diff = diff.abs()
             correct_ans = torch.zeros(len(y))
             for i, (i0, i1) in enumerate(diff):
-                correct_ans[i] = 1 if i0 < 0.1 and i1 < 2 else 0
+                correct_ans[i] = 1 if i0 < 1 and i1 < 3 else 0
             correct = correct_ans.sum()
 
     test_loss /= num_batches
