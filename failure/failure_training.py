@@ -11,15 +11,16 @@ status = 'cuda' if torch.cuda.is_available() else 'cpu'
 device = torch.device(status)
 
 # Training parameters
-epochs = 3000
-learning_rate = 0.001
+epochs = 10000
+learning_rate = 0.00001
 
 # Import data into a Dataset class
 data = FailureData('data.csv')
 
 # Create ANN
-model = FailureNet(data.input_vector_length(), 10, data.output_vector_length())
+model = FailureNet()
 model.to(device)
+print(model)
 
 # Split data into training and testing
 data_len = len(data)
@@ -72,12 +73,19 @@ try:
             test_loss /= num_batches
             correct /= size
             # Set bar
-            tepoch.set_postfix(loss=out_loss.item(
-            ), accuracy=f"{round(100.*correct, 2)}%", AvgLoss=f"{round(test_loss, 2)}")
+            tepoch.set_postfix(accuracy=f"{round(100.*correct, 3)}%",
+                               AvgLoss=f"{round(test_loss, 4)}", loss=out_loss.item())
 except KeyboardInterrupt:
     print("Training terminated early")
 else:
     print("Done!")
+
+
+print("----- Testing -----")
+print(test_data[10][1])
+out_pred = model(test_data[10][0])
+print(out_pred)
+print(data.match_encoding(out_pred))
 
 # Save model
 response = input("Save model (y/n): ")
